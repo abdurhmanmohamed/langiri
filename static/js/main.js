@@ -136,7 +136,25 @@
         $filter.on('click', 'button, .category-card', function () {
             var filterValue = $(this).attr('data-filter');
             $topeContainer.isotope({filter: filterValue});
+
+            // Toggle subcategories bar visibility based on selection
+            if (filterValue === '.bra') {
+                $('#bra-subcategories').addClass('show');
+                $('#bra-subcategories .sub-chip').removeClass('active');
+                $('#bra-subcategories .sub-chip[data-subfilter=".bra"]').addClass('active');
+            } else {
+                $('#bra-subcategories').removeClass('show');
+            }
         });
+    });
+
+    // Handle subcategory click events
+    $(document).on('click', '#bra-subcategories .sub-chip', function() {
+        $('#bra-subcategories .sub-chip').removeClass('active');
+        $(this).addClass('active');
+        
+        var subFilterValue = $(this).attr('data-subfilter');
+        $topeContainer.isotope({ filter: subFilterValue });
     });
 
     // init Isotope
@@ -157,10 +175,17 @@
         var urlParams = new URLSearchParams(window.location.search);
         var filter = urlParams.get('filter');
 
-        // Also support ?category=lip/body/nail links (footer & side menu)
+        // Also support ?category=... links (footer & side menu)
         var categoryParam = urlParams.get('category');
         if (categoryParam) {
-            var catMap = { lip: '.Lip', body: '.Body', nail: '.Nail' };
+            var catMap = {
+                'bra': '.bra',
+                'soft-bra': '.soft-bra',
+                'sport-bra': '.sport-bra',
+                'underwear': '.underwear',
+                'push-shorts': '.push-shorts',
+                'corset': '.corset'
+            };
             filter = catMap[categoryParam.toLowerCase()] || filter;
         }
 
@@ -169,6 +194,14 @@
             // Update active state
             $('.filter-tope-group button, .filter-tope-group .category-card').removeClass('how-active1');
             $('[data-filter="' + filter + '"]').addClass('how-active1');
+            
+            if (filter === '.bra') {
+                $('#bra-subcategories').addClass('show');
+                $('#bra-subcategories .sub-chip').removeClass('active');
+                $('#bra-subcategories .sub-chip[data-subfilter=".bra"]').addClass('active');
+            } else {
+                $('#bra-subcategories').removeClass('show');
+            }
             
             // If it's a card, scroll to it if needed
             var $activeCard = $('.category-card[data-filter="' + filter + '"]');
@@ -245,6 +278,10 @@
                     <!-- Name + Price -->
                     <div class="cart-item-info flex-grow-1 ms-2">
                         <div class="cart-item-name" style="font-family:  'Cairo', 'sans-serif';">${item.name}</div>
+                        <div class="small text-muted" style="font-size: 11px; font-family: 'Cairo', 'sans-serif';">
+                            ${item.color ? `<span>Shade: ${item.color}</span>` : ''}
+                            ${item.size ? `<span class="ms-1">| Size: ${item.size}</span>` : ''}
+                        </div>
                         <div class="cart-item-price">${item.amount} x ${item.price} EGP</div>
                     </div>
 
@@ -525,111 +562,36 @@ $('.btn-num-product-up').on('click', function(){
         setActiveColorChip($('#color').val());
     }
     
-    // Render all variant colors as visible, clickable chips inside the quick-view modal.
-    function colorLabelToCss(label) {
-        const raw = (label || '').trim();
-        const s = raw.toLowerCase();
-
-        const map = {
-            red: '#ef4444',
-            blue: '#3b82f6',
-            black: '#111827',
-            white: '#f9fafb',
-            gray: '#9ca3af',
-            grey: '#9ca3af',
-            green: '#22c55e',
-            yellow: '#eab308',
-            pink: '#ec4899',
-            brown: '#8b5e3c',
-            purple: '#a855f7',
-            orange: '#f97316',
-            gold: '#d4af37',
-            silver: '#c0c0c0'
-        };
-        if (map[s]) return map[s];
-
-        // Common Arabic color names.
-        const amap = {
-            'احمر': '#ef4444',
-            'أحمر': '#ef4444',
-            'ازرق': '#3b82f6',
-            'أزرق': '#3b82f6',
-            'اسود': '#111827',
-            'أسود': '#111827',
-            'ابيض': '#f9fafb',
-            'أبيض': '#f9fafb',
-            'رمادي': '#9ca3af',
-            'اخضر': '#22c55e',
-            'أخضر': '#22c55e',
-            'اصفر': '#eab308',
-            'أصفر': '#eab308',
-            'وردي': '#ec4899',
-            'بني': '#8b5e3c',
-            'بنفسجي': '#a855f7',
-            'برتقالي': '#f97316'
-        };
-        if (amap[raw]) return amap[raw];
-
-        return null;
-    }
-
-    function setActiveColorChip(color) {
-        const $wrap = $('#colorOptions');
+    function setActiveSizeChip(size) {
+        const $wrap = $('#sizeOptions');
         if (!$wrap.length) return;
 
-        const target = (color || '').trim();
-        $wrap.find('.js-color-chip').each(function(){
+        const target = (size || '').trim();
+        $wrap.find('.js-size-chip').each(function(){
             const $btn = $(this);
-            const btnColor = String($btn.data('color') || '').trim();
-            const isActive = btnColor === target;
+            const btnSize = String($btn.data('size') || '').trim();
+            const isActive = btnSize === target;
             $btn.toggleClass('is-active', isActive);
             $btn.attr('aria-pressed', isActive ? 'true' : 'false');
         });
     }
 
-    function renderColorChips(variants, colorsFallback) {
-        const $wrap = $('#colorOptions');
+    function renderSizeChips(sizes) {
+        const $wrap = $('#sizeOptions');
         if (!$wrap.length) return;
 
         $wrap.empty();
 
-        const chips = [];
-        if (Array.isArray(variants) && variants.length) {
-            variants.forEach(function(v){
-                chips.push({
-                    color: v.color || 'Default',
-                    variant_id: v.id || '',
-                    image: v.image || ''
-                });
-            });
-        } else if (Array.isArray(colorsFallback) && colorsFallback.length) {
-            colorsFallback.forEach(function(c){
-                chips.push({ color: c, variant_id: '', image: '' });
+        if (Array.isArray(sizes) && sizes.length) {
+            sizes.forEach(function(size){
+                const $btn = $('<button type="button" class="size-chip js-size-chip" aria-pressed="false"></button>');
+                $btn.attr('data-size', size);
+                $btn.text(size);
+                $wrap.append($btn);
             });
         }
 
-        // Render unique items (avoid duplicates).
-        const seen = new Set();
-        chips.forEach(function(c){
-            const key = [c.color, c.variant_id, c.image].join('|');
-            if (seen.has(key)) return;
-            seen.add(key);
-
-            const $btn = $('<button type="button" class="color-chip js-color-chip" aria-pressed="false"></button>');
-            $btn.attr('data-color', c.color);
-            if (c.variant_id) $btn.attr('data-variant-id', c.variant_id);
-            if (c.image) $btn.attr('data-image', c.image);
-
-            const $dot = $('<span class="color-dot" aria-hidden="true"></span>');
-            const cssColor = colorLabelToCss(c.color);
-            if (cssColor) $dot.css('background', cssColor);
-
-            const $label = $('<span class="color-chip-label"></span>').text(c.color);
-            $btn.append($dot, $label);
-            $wrap.append($btn);
-        });
-
-        setActiveColorChip($('#color').val());
+        setActiveSizeChip($('#size').val());
     }
 $(document).on('click', '.js-show-modal1', function(e){
         e.preventDefault();
@@ -718,8 +680,21 @@ $(document).on('click', '.js-show-modal1', function(e){
                 }
 
                 renderColorChips(variants, response.colors || []);
-                $('#add-cart, #checkout-now').attr('data-item-id', item_id);
                 $('#color').trigger('change');
+
+                // update sizes + visible chips
+                $('#size').html('');
+                if (response.sizes && response.sizes.length) {
+                    response.sizes.forEach(function(size){
+                        $('#size').append(`<option class='size-item' style="font-family:  'Cairo', 'sans-serif';">${size}</option>`);
+                    });
+                    $('#sizeSection').show();
+                    renderSizeChips(response.sizes);
+                } else {
+                    $('#sizeSection').hide();
+                }
+
+                $('#add-cart, #checkout-now').attr('data-item-id', item_id);
                 // show modal
                 $('.js-modal1').addClass('show-modal1');
             }
@@ -759,6 +734,23 @@ $(document).on('click', '.js-show-modal1', function(e){
         }
 
         setActiveColorChip(color);
+    });
+
+    $(document).on('change', '#size', function(){
+        setActiveSizeChip($(this).val());
+    });
+
+    $(document).on('click', '.js-size-chip', function(){
+        const $btn = $(this);
+        const size = String($btn.data('size') || '').trim();
+
+        if (size) {
+            const $select = $('#size');
+            if ($select.length) {
+                $select.val(size).trigger('change');
+            }
+        }
+        setActiveSizeChip(size);
     });
 $('.js-hide-modal1').on('click', function(){
         $('.js-modal1').removeClass('show-modal1');

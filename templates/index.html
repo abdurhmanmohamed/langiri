@@ -110,13 +110,11 @@
             <div class="hero-text-wrapper">
               <span class="hero-subtitle">Welcome to LINGERIE Home</span>
               <h1 class="hero-title">
-                Hello gorgeous, <br />Designed to Silhouette. Crafted to Last.
+                Designed to Silhouette. Crafted to Last.
               </h1>
               <p class="hero-description">
-                You picked a great day to stop by. We just put out our new
-                nourishing lip collections and natural body care. Feel free to
-                explore, and let me know if you need help finding your perfect
-                shade!
+                Discover premium, ultra-soft lingerie and everyday essentials
+                that celebrate your natural form with seamless elegance.
               </p>
               <a href="{{url_for('shop')}}" class="hero-btn">
                 Explore Collection
@@ -127,10 +125,13 @@
           <!-- Images Side -->
           <div class="col-md-6 col-lg-6 p-b-50">
             <div class="hero-image-composition">
+              <!-- Premium Accent Frame behind Main Image -->
+              <div class="img-frame-accent"></div>
+
               <!-- Main Image -->
               <div class="img-main-wrapper">
                 <img
-                  src="/static/images/hero2.png"
+                  src="/static/imgs/hero1.jpeg"
                   alt="Romaire Beauty"
                   class="img-main"
                 />
@@ -138,7 +139,7 @@
               <!-- Secondary Floating Image -->
               <div class="img-floating-wrapper">
                 <img
-                  src="/static/images/hero1.png"
+                  src="/static/imgs/hero2.jpeg"
                   alt="Romaire Collection"
                   class="img-floating"
                 />
@@ -153,6 +154,17 @@
 
     <style>
       /* Premium Hero Section Styles */
+      @keyframes heroFadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       .romaire-hero-section {
         padding-top: 120px;
         padding-bottom: 60px;
@@ -169,6 +181,7 @@
         padding-right: 30px;
         position: relative;
         z-index: 10;
+        animation: heroFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
       }
 
       .hero-subtitle {
@@ -241,71 +254,104 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        animation: heroFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
       }
 
       .img-main-wrapper {
-        width: 80%;
-        height: 90%;
-        border-radius: 40px;
+        width: 75%;
+        height: 85%;
+        border-radius: 200px 200px 20px 20px;
         overflow: hidden;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         position: relative;
         z-index: 2;
-        border: 10px solid #fff;
-        transform: rotate(-3deg);
-        transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 6px solid #fff;
+        transform: rotate(-2deg);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .img-main {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .img-frame-accent {
+        position: absolute;
+        top: 25px;
+        left: 45px;
+        width: 75%;
+        height: 85%;
+        border: 1.5px solid rgba(212, 175, 55, 0.5);
+        border-radius: 200px 200px 20px 20px;
+        z-index: 1;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .img-floating-wrapper {
         position: absolute;
-        bottom: -10px;
-        left: -20px;
-        width: 50%;
-        height: 55%;
-        border-radius: 30px;
+        bottom: 20px;
+        left: 20px;
+        width: 48%;
+        height: 52%;
+        border-radius: 120px 120px 20px 20px;
         overflow: hidden;
-        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         z-index: 3;
-        border: 8px solid #fff;
-        transform: rotate(5deg);
-        transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 5px solid #fff;
+        transform: rotate(3deg);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .img-floating {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
+      /* Hover states */
       .hero-image-composition:hover .img-main-wrapper {
-        transform: rotate(0) scale(1.02);
+        transform: translateY(-8px) rotate(-1deg);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+      }
+
+      .hero-image-composition:hover .img-main {
+        transform: scale(1.06);
       }
 
       .hero-image-composition:hover .img-floating-wrapper {
-        transform: rotate(0) translateY(-15px) scale(1.05);
-        box-shadow: 0 35px 60px rgba(0, 0, 0, 0.2);
+        transform: translateY(-20px) rotate(2deg);
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.18);
+      }
+
+      .hero-image-composition:hover .img-floating {
+        transform: scale(1.08);
+      }
+
+      .hero-image-composition:hover .img-frame-accent {
+        transform: translate(-12px, -8px) scale(1.02);
+        border-color: rgba(212, 175, 55, 0.8);
       }
 
       .hero-glow-circle {
         position: absolute;
         top: 50%;
-        right: 0%;
+        right: -10%;
         transform: translateY(-50%);
-        width: 400px;
-        height: 400px;
+        width: 450px;
+        height: 450px;
         background: radial-gradient(
           circle,
-          rgba(251, 203, 219, 0.7) 0%,
-          transparent 70%
+          rgba(251, 203, 219, 0.45) 0%,
+          rgba(212, 175, 55, 0.1) 40%,
+          transparent 75%
         );
-        z-index: 1;
+        z-index: 0;
         border-radius: 50%;
+        filter: blur(10px);
+        pointer-events: none;
       }
 
       @media (max-width: 991px) {
@@ -313,15 +359,26 @@
           font-size: 2.8rem;
         }
         .hero-image-composition {
-          height: 450px;
+          height: 480px;
           margin-top: 40px;
         }
         .hero-text-wrapper {
           padding-right: 0;
           text-align: center;
         }
+        .img-main-wrapper {
+          width: 70%;
+          height: 85%;
+        }
         .img-floating-wrapper {
-          left: 0;
+          left: 10%;
+          width: 45%;
+          height: 50%;
+        }
+        .img-frame-accent {
+          left: 20%;
+          width: 65%;
+          height: 80%;
         }
       }
     </style>
@@ -461,18 +518,18 @@
         <div class="row">
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <a
-              href="{{url_for('shop')}}?category=body"
+              href="{{url_for('shop')}}?category=underwear"
               class="premium-banner-card"
             >
               <img
-                src="/static/imgs/blaner-1.jpeg"
+                src="/static/imgs/cat3.jpeg"
                 class="premium-banner-img"
                 alt="Pants"
                 loading="lazy"
               />
               <div class="banner-glass-badge">
                 <span class="banner-label">NEW SEASON</span>
-                <h4 class="banner-title">Skin Care</h4>
+                <h4 class="banner-title">Ready to Feel Amazing?</h4>
                 <div class="banner-discover">Discover more</div>
               </div>
             </a>
@@ -481,7 +538,7 @@
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <a href="{{url_for('shop')}}" class="premium-banner-card">
               <img
-                src="/static/imgs/blaner-2.jpg"
+                src="/static/imgs/cat2.jpeg"
                 class="premium-banner-img"
                 alt="Shmiz"
                 loading="lazy"
@@ -496,18 +553,18 @@
 
           <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
             <a
-              href="{{url_for('shop')}}?category=lip"
+              href="{{url_for('shop')}}?category=bra"
               class="premium-banner-card"
             >
               <img
-                src="/static/imgs/blaner-3.png"
+                src="/static/imgs/cat1.jpeg"
                 class="premium-banner-img"
                 alt="Skirts"
                 loading="lazy"
               />
               <div class="banner-glass-badge">
                 <span class="banner-label">EXCLUSIVE</span>
-                <h4 class="banner-title">Fresh Lips</h4>
+                <h4 class="banner-title">Reveal the Collection</h4>
                 <div class="banner-discover">Shop the look</div>
               </div>
             </a>

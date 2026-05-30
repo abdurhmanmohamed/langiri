@@ -18,20 +18,146 @@
             <span>الأكثر مبيعاً<br />Top Selling</span>
           </div>
 
-          <div class="category-card" data-filter=".Lip">
+          <div class="category-card" data-filter=".bra">
+            <div class="icon-box"><i class="fa fa-female"></i></div>
+            <span>حمالة الصدر<br />Bra</span>
+          </div>
+
+          <div class="category-card" data-filter=".soft-bra">
+            <div class="icon-box"><i class="fa fa-heart"></i></div>
+            <span>سفت براه<br />Soft Bra</span>
+          </div>
+
+          <div class="category-card" data-filter=".sport-bra">
+            <div class="icon-box"><i class="fa fa-bolt"></i></div>
+            <span>سفت براه جيم رياضي<br />Sport Bra</span>
+          </div>
+
+          <div class="category-card" data-filter=".underwear">
+            <div class="icon-box"><i class="fa fa-circle-o"></i></div>
+            <span>اندر وير<br />Underwear</span>
+          </div>
+
+          <div class="category-card" data-filter=".push-shorts">
             <div class="icon-box"><i class="fa fa-magic"></i></div>
-            <span>منتجات الشفاه<br />Lip Products</span>
+            <span>شورت بوش<br />Push Shorts</span>
           </div>
 
-          <div class="category-card" data-filter=".Body">
-            <div class="icon-box"><i class="fa fa-leaf"></i></div>
-            <span>منتجات الجسم<br />Body Products</span>
+          <div class="category-card" data-filter=".corset">
+            <div class="icon-box"><i class="fa fa-hourglass-half"></i></div>
+            <span>مشد الكورسيه<br />Corset</span>
           </div>
+        </div>
+      </div>
 
-          <div class="category-card" data-filter=".Nail">
-            <div class="icon-box"><i class="fa fa-paint-brush"></i></div>
-            <span>منتجات الاظافر<br />Nail Products</span>
-          </div>
+      <!-- Subcategory styles -->
+      <style>
+        .subcategory-nav-wrapper {
+          width: 100%;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .subcategory-nav-wrapper.show {
+          max-height: 150px;
+          opacity: 1;
+          margin-top: 20px;
+          margin-bottom: 10px;
+          overflow-x: auto;
+        }
+
+        .subcategory-grid {
+          display: flex;
+          gap: 10px;
+          padding: 10px 5px;
+          min-width: max-content;
+        }
+
+        /* Scrollbar styling for subcategory horizontal scroll */
+        .subcategory-nav-wrapper::-webkit-scrollbar {
+          height: 5px;
+        }
+        .subcategory-nav-wrapper::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.02);
+          border-radius: 10px;
+        }
+        .subcategory-nav-wrapper::-webkit-scrollbar-thumb {
+          background: rgba(251, 203, 219, 0.4);
+          border-radius: 10px;
+        }
+        .subcategory-nav-wrapper::-webkit-scrollbar-thumb:hover {
+          background: var(--roma-primary);
+        }
+
+        .sub-chip {
+          background: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(251, 203, 219, 0.3);
+          padding: 8px 18px;
+          border-radius: 50px;
+          font-family: 'Cairo', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #555;
+          cursor: pointer;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        .sub-chip span {
+          line-height: 1.2;
+        }
+
+        .sub-chip:hover {
+          background: var(--roma-bg-soft);
+          border-color: var(--roma-primary);
+          transform: translateY(-2px);
+          color: var(--roma-primary);
+        }
+
+        .sub-chip.active {
+          background: linear-gradient(135deg, var(--roma-primary), var(--roma-accent));
+          color: #fff;
+          border-color: transparent;
+          box-shadow: 0 8px 18px rgba(251, 203, 219, 0.4);
+        }
+      </style>
+
+      <!-- Subcategories for Bra (حمالة الصدر) -->
+      <div class="subcategory-nav-wrapper" id="bra-subcategories">
+        <div class="subcategory-grid filter-subtope-group">
+          <button class="sub-chip active" data-subfilter=".bra">
+            <span>الكل<br>All</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".push-up">
+            <span>براه بوش اب</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".half-push">
+            <span>براه هاف بوش</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".laser">
+            <span>براه ليزر</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".padded-underwire">
+            <span>براه مبطن حديده</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".padded-wireless">
+            <span>براه مبطن بدون حديده</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".padded-nursing">
+            <span>براه مبطن رضاعه</span>
+          </button>
+          <button class="sub-chip" data-subfilter=".special-size">
+            <span>براه مقاسات خاصه</span>
+          </button>
         </div>
       </div>
 
@@ -68,7 +194,7 @@
       {% for item in items: %} {% set is_hot = item.old_price or
       item.discount_label %} {% set is_top = item.name in top_selling %}
       <div
-        class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {% if item.category %}{{item.category}}{% endif %} {% if is_hot %}hot-price{% endif %} {% if is_top %}top-selling{% endif %} rounded-2"
+        class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {% if item.category %}{{item.category}}{% endif %} {% if item.subcategory %}{{item.subcategory}}{% endif %} {% if is_hot %}hot-price{% endif %} {% if is_top %}top-selling{% endif %} rounded-2"
         id="popup"
       >
         <!-- Block2 -->
@@ -235,6 +361,42 @@
                   </div>
                 </div>
 
+                <div class="flex-w flex-c-m p-b-10" id="sizeSection" style="display: none;">
+                  <div class="size-203 flex-c-m respon6 p-b-10 w-full text-center">Size</div>
+
+                  <div class="size-204 respon6-next">
+                    <div
+                      class="rs1-select2 bor8 bg0"
+                      style="
+                        font-family: &quot;Cairo&quot;, &quot;sans-serif&quot;;
+                        visibility: hidden;
+                        height: 0;
+                        margin: 0;
+                        padding: 0;
+                      "
+                    >
+                      <select
+                        style="
+                          font-family:
+                            &quot;Cairo&quot;, &quot;sans-serif&quot;;
+                        "
+                        class="js-select2"
+                        name="time"
+                        id="size"
+                      ></select>
+                      <div
+                        class="dropDownSelect2"
+                        style="
+                          font-family:
+                            &quot;Cairo&quot;, &quot;sans-serif&quot;;
+                        "
+                      ></div>
+                    </div>
+                    <!-- Rendered by static/js/main.js (shows all sizes as clickable chips) -->
+                    <div id="sizeOptions" class="size-chip-list d-flex justify-content-center flex-wrap" dir="auto"></div>
+                  </div>
+                </div>
+
                 <div class="flex-w flex-c-m p-b-20 pt-3">
                     <div class="wrap-num-product flex-w m-tb-10">
                       <div
@@ -373,10 +535,28 @@
               <!-- CATEGORY -->
               <select class="form-control mb-3" id="itemCategory">
                 <option value="">-- Select Category --</option>
-                <option value="Lip">💄 Lip Products</option>
-                <option value="Body">🌿 Body Products</option>
-                <option value="Nail">💅 Nail Products</option>
+                <option value="bra">حمالة الصدر</option>
+                <option value="soft-bra">سفت براه</option>
+                <option value="sport-bra">سفت براه جيم رياضي</option>
+                <option value="underwear">اندر وير</option>
+                <option value="push-shorts">شورت بوش</option>
+                <option value="corset">مشد الكورسيه</option>
               </select>
+
+              <!-- SUBCATEGORY -->
+              <div class="mb-3" id="itemSubcategoryWrapper" style="display: none;">
+                <label class="form-label" style="font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 600; color: #555;">Subcategory (القسم الفرعي)</label>
+                <select class="form-control" id="itemSubcategory">
+                  <option value="">-- Select Subcategory --</option>
+                  <option value="push-up">براه بوش اب</option>
+                  <option value="half-push">براه هاف بوش</option>
+                  <option value="laser">براه ليزر</option>
+                  <option value="padded-underwire">براه مبطن حديده</option>
+                  <option value="padded-wireless">براه مبطن بدون حديده</option>
+                  <option value="padded-nursing">براه مبطن رضاعه</option>
+                  <option value="special-size">براه مقاسات خاصه</option>
+                </select>
+              </div>
 
               <!-- COLORS -->
               <!-- COLORS -->
@@ -399,6 +579,29 @@
                     "
                   />
                   <button class="btn btn-dark" id="addColor">Add</button>
+                </div>
+              </div>
+
+              <!-- SIZES -->
+              <div class="mb-3">
+                <label class="form-label">Sizes</label>
+
+                <div
+                  id="sizeContainer"
+                  style="font-family: &quot;Cairo&quot;, &quot;sans-serif&quot;"
+                ></div>
+
+                <div class="input-group mt-2">
+                  <input
+                    type="text"
+                    id="newSize"
+                    class="form-control"
+                    placeholder="Add size"
+                    style="
+                      font-family: &quot;Cairo&quot;, &quot;sans-serif&quot;;
+                    "
+                  />
+                  <button class="btn btn-dark" id="addSize">Add</button>
                 </div>
               </div>
               <button class="btn btn-success w-100 mt-3" id="saveItem">

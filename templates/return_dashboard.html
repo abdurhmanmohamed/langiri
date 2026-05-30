@@ -659,7 +659,7 @@
 							<h4 class="item-name" style="font-family:  'Cairo', 'sans-serif';">${item.name}</h4>
 							<div class="item-meta">
 								<span style="font-family:  'Cairo', 'sans-serif';">${item.color}</span>
-								<span>${item.size}</span>
+								${item.size ? `<span style="font-family: 'Cairo', 'sans-serif'; margin-left: 8px;">| Size: ${item.size}</span>` : ''}
 							</div>
 						</div>
 

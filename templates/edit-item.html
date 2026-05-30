@@ -408,42 +408,30 @@
                 style="font-family: &quot;Cairo&quot;"
               >
                 <option value="">-- Select Category --</option>
-                <option
-                  value="Lip"
-                  {%
-                  if
-                  item.category=""
-                  ="Lip"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  💄 Lip Products
-                </option>
-                <option
-                  value="Body"
-                  {%
-                  if
-                  item.category=""
-                  ="Body"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  🌿 Body Products
-                </option>
-                <option
-                  value="Nail"
-                  {%
-                  if
-                  item.category=""
-                  ="Nail"
-                  %}selected{%
-                  endif
-                  %}
-                >
-                  💅 Nail Products
-                </option>
+                <option value="bra" {% if item.category == "bra" %}selected{% endif %}>حمالة الصدر</option>
+                <option value="soft-bra" {% if item.category == "soft-bra" %}selected{% endif %}>سفت براه</option>
+                <option value="sport-bra" {% if item.category == "sport-bra" %}selected{% endif %}>سفت براه جيم رياضي</option>
+                <option value="underwear" {% if item.category == "underwear" %}selected{% endif %}>اندر وير</option>
+                <option value="push-shorts" {% if item.category == "push-shorts" %}selected{% endif %}>شورت بوش</option>
+                <option value="corset" {% if item.category == "corset" %}selected{% endif %}>مشد الكورسيه</option>
+              </select>
+            </div>
+
+            <div class="roma-field" id="subcategory-wrapper" {% if item.category != "bra" %}style="display: none;"{% endif %}>
+              <label>Product Subcategory (القسم الفرعي)</label>
+              <select
+                id="subcategory"
+                class="roma-input"
+                style="font-family: &quot;Cairo&quot;"
+              >
+                <option value="">-- Select Subcategory --</option>
+                <option value="push-up" {% if item.subcategory == "push-up" %}selected{% endif %}>براه بوش اب</option>
+                <option value="half-push" {% if item.subcategory == "half-push" %}selected{% endif %}>براه هاف بوش</option>
+                <option value="laser" {% if item.subcategory == "laser" %}selected{% endif %}>براه ليزر</option>
+                <option value="padded-underwire" {% if item.subcategory == "padded-underwire" %}selected{% endif %}>براه مبطن حديده</option>
+                <option value="padded-wireless" {% if item.subcategory == "padded-wireless" %}selected{% endif %}>براه مبطن بدون حديده</option>
+                <option value="padded-nursing" {% if item.subcategory == "padded-nursing" %}selected{% endif %}>براه مبطن رضاعه</option>
+                <option value="special-size" {% if item.subcategory == "special-size" %}selected{% endif %}>براه مقاسات خاصه</option>
               </select>
             </div>
 
@@ -495,6 +483,50 @@
                 <button
                   class="btn btn-dark px-4"
                   id="addColorBtn"
+                  type="button"
+                  style="
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                    border-radius: 0 20px 20px 0;
+                  "
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            <div class="roma-field">
+              <label>Product Sizes</label>
+              <div id="sizeContainer" class="d-flex flex-wrap gap-2 mb-3">
+                {% for size in item.item_sizes %}
+                <span
+                  class="badge bg-secondary p-2 rounded-3 d-flex align-items-center gap-2"
+                  style="font-family: &quot;Cairo&quot;"
+                >
+                  <span class="size-label">{{ size.size }}</span>
+                  <i
+                    class="fa fa-times cursor-pointer"
+                    onclick="this.parentElement.remove()"
+                    style="cursor: pointer"
+                  ></i>
+                </span>
+                {% endfor %}
+              </div>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="newSize"
+                  class="roma-input"
+                  style="
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    flex: 1;
+                  "
+                  placeholder="Add new size..."
+                />
+                <button
+                  class="btn btn-dark px-4"
+                  id="addSizeBtn"
                   type="button"
                   style="
                     border-top-left-radius: 0;
@@ -582,6 +614,16 @@
           })
           .filter(Boolean);
 
+        const sizeElements = document
+          .getElementById("sizeContainer")
+          .querySelectorAll("span.badge");
+        const sizes = Array.from(sizeElements)
+          .map((el) => {
+            const labelEl = el.querySelector(".size-label");
+            return labelEl ? labelEl.textContent.trim() : el.textContent.trim();
+          })
+          .filter(Boolean);
+
         const data = {
           n: document.getElementById("n").value,
           price: document.getElementById("price").value,
@@ -589,8 +631,10 @@
           discount_label: document.getElementById("discount_label").value,
           description: document.getElementById("desc").value,
           category: document.getElementById("category").value,
+          subcategory: document.getElementById("subcategory").value,
           images: addedImagesData,
           colors: colors,
+          sizes: sizes,
         };
 
         fetch(`/admin/update-item/${id}`, {
@@ -642,6 +686,45 @@
             document.getElementById("addColorBtn").click();
           }
         });
+
+      document
+        .getElementById("addSizeBtn")
+        .addEventListener("click", function () {
+          const input = document.getElementById("newSize");
+          const val = input.value.trim();
+          if (!val) return;
+
+          const span = document.createElement("span");
+          span.className =
+            "badge bg-secondary p-2 rounded-3 d-flex align-items-center gap-2";
+          span.style.fontFamily = "Cairo";
+          span.innerHTML = `
+                <span class="size-label">${val}</span>
+                <i class="fa fa-times cursor-pointer" onclick="this.parentElement.remove()" style="cursor:pointer"></i>
+            `;
+          document.getElementById("sizeContainer").appendChild(span);
+          input.value = "";
+        });
+
+      document
+        .getElementById("newSize")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("addSizeBtn").click();
+          }
+        });
+
+      document.getElementById("category").addEventListener("change", function () {
+        const subWrapper = document.getElementById("subcategory-wrapper");
+        const subSelect = document.getElementById("subcategory");
+        if (this.value === "bra") {
+          subWrapper.style.display = "block";
+        } else {
+          subWrapper.style.display = "none";
+          subSelect.value = "";
+        }
+      });
     </script>
   </body>
 </html>

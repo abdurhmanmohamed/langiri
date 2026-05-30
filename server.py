@@ -25,10 +25,10 @@ cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT':
 # app.register_blueprint(analytics_bp)
 login_manager = LoginManager(app)
 app.secret_key='abdomohamed'
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.faossrhfekblsmausrte:Romaire_marim@aws-1-eu-central-1.pooler.supabase.com:6543/postgres"
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-BUCKET = os.getenv("BUCKET")
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.avcbhiwatshznfgpiyur:abdo_mohame@aws-1-eu-north-1.pooler.supabase.com:6543/postgres"
+SUPABASE_URL = 'https://avcbhiwatshznfgpiyur.supabase.co'
+SUPABASE_KEY = 'sb_publishable_wZj5ZMt4XMTdHDbN6P6dLw_M2QM412m'
+BUCKET = 'data'
 login_manager.login_view = 'login'
 class Base(DeclarativeBase):
     pass
@@ -53,14 +53,22 @@ class ItemDetails(db.Model):
     discount_label:Mapped[str] = mapped_column(String(50), nullable=True)
     visability:Mapped[int] = mapped_column(Integer, nullable=False,default=1)
     category:Mapped[str] = mapped_column(String(50), nullable=True, default='')
+    subcategory:Mapped[str] = mapped_column(String(100), nullable=True, default='')
     item_colors = relationship('ItemColor',backref='deltails')
     item_imgs = relationship('ItemImg',backref='deltails')
+    item_sizes = relationship('ItemSize',backref='deltails', cascade='all, delete-orphan')
 
 
 class ItemColor(db.Model):
     __tablename__='itemcolor'
     id:Mapped[int] = mapped_column(Integer, primary_key=True)
     color:Mapped[str] = mapped_column(String(150),)
+    item_id:Mapped[int] = mapped_column(Integer, ForeignKey('itemdetails.id'))
+
+class ItemSize(db.Model):
+    __tablename__='itemsize'
+    id:Mapped[int] = mapped_column(Integer, primary_key=True)
+    size:Mapped[str] = mapped_column(String(150),)
     item_id:Mapped[int] = mapped_column(Integer, ForeignKey('itemdetails.id'))
     
 class ItemImg(db.Model):
@@ -104,6 +112,7 @@ class Cart(db.Model):
             "img": self.img,
             "amount": self.amount,
             "color": self.color,
+            "size": self.size,
             "price": self.price,
         }
     
@@ -132,6 +141,35 @@ with app.app_context():
     except Exception as e:
         db.session.rollback()
         print(f"⚠️ category migration: {e}")
+
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("ALTER TABLE itemdetails ADD COLUMN IF NOT EXISTS subcategory VARCHAR(100) DEFAULT ''"))
+        db.session.commit()
+        print("✅ subcategory column ready.")
+    except Exception as e:
+        db.session.rollback()
+        print(f"⚠️ subcategory migration: {e}")
+
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("UPDATE itemdetails SET category = 'bra' WHERE category = 'Lip'"))
+        db.session.execute(text("UPDATE itemdetails SET category = 'underwear' WHERE category = 'Body'"))
+        db.session.execute(text("UPDATE itemdetails SET category = 'corset' WHERE category = 'Nail'"))
+        db.session.commit()
+        print("✅ existing categories migrated successfully.")
+    except Exception as e:
+        db.session.rollback()
+        print(f"⚠️ category value migration: {e}")
+
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("ALTER TABLE cart ADD COLUMN IF NOT EXISTS size VARCHAR(150) DEFAULT ''"))
+        db.session.commit()
+        print("✅ cart size column ready.")
+    except Exception as e:
+        db.session.rollback()
+        print(f"⚠️ cart size migration: {e}")
 
 
 @login_manager.user_loader
@@ -215,7 +253,7 @@ def login():
     
 
 @app.route('/register',methods=['POST', 'GET'])
-@login_required
+# @login_required
 def register():
     if request.method=='POST':
         ent_name = request.form['name']
@@ -253,11 +291,7 @@ def check_out():
         selected_city_price = ShippingPrice.query.filter_by(city=request.form['city']).first()
         shipping_cost = selected_city_price.price if selected_city_price else 0
 
-        discount = 0
-        if total_price >= 300:
-            discount = total_price * 0.1
-        
-        final_total = (total_price - discount) + shipping_cost
+        final_total = total_price + shipping_cost
 
         order = Order(
             name = request.form['fullname'],
@@ -331,6 +365,7 @@ def get_item():
     item = db.get_or_404(ItemDetails, item_id)
     imgs_list = [img.img for img in item.item_imgs]
     colors_list = [color.color for color in item.item_colors]
+    sizes_list = [size.size for size in item.item_sizes]
     return jsonify({
         "name": item.name,
         "price": item.price,
@@ -338,7 +373,8 @@ def get_item():
         "discount_label": item.discount_label,
         "description": item.description,
         "images": imgs_list,
-        "colors": colors_list
+        "colors": colors_list,
+        "sizes": sizes_list
     })
     
 
@@ -360,6 +396,7 @@ def add_to_cart():
         cart_prduct = Cart(name = item_with_id.name, 
                            img = item_img,
                            color = data.get('color', ''),
+                           size = data.get('size', ''),
                            price= item_with_id.price,
                            amount = int(data.get('amount', 1)),
                            session_id=session['session_id'],
@@ -560,7 +597,8 @@ def add_item():
     new_item = ItemDetails(name=name, price=price, description=description,
                            old_price=int(old_price) if old_price else None,
                            discount_label=discount_label,
-                           category=data.get("category", "") or "")
+                           category=data.get("category", "") or "",
+                           subcategory=data.get("subcategory", "") or "")
     db.session.add(new_item)
     db.session.commit()  # commit once to get new_item.id
 
@@ -568,6 +606,12 @@ def add_item():
     for color in colors:
         new_item_color = ItemColor(color=color, item_id=new_item.id)
         db.session.add(new_item_color)
+
+    # Add sizes
+    sizes = data.get("sizes", [])
+    for size in sizes:
+        new_item_size = ItemSize(size=size, item_id=new_item.id)
+        db.session.add(new_item_size)
 
     # Add images
     for link in image_links:
@@ -633,6 +677,7 @@ def update_item(id):
     item.old_price = int(old_price) if old_price else None
     item.discount_label = discount_label
     item.category = data.get("category", "") or ""
+    item.subcategory = data.get("subcategory", "") or ""
 
     # handle colors
     colors = data.get("colors", [])
@@ -644,6 +689,16 @@ def update_item(id):
             if clean_name:
                 new_c = ItemColor(color=clean_name, item_id=id)
                 db.session.add(new_c)
+
+    # handle sizes
+    sizes = data.get("sizes", [])
+    if isinstance(sizes, list):
+        ItemSize.query.filter_by(item_id=id).delete()
+        for size_name in sizes:
+            clean_size = size_name.strip()
+            if clean_size:
+                new_s = ItemSize(size=clean_size, item_id=id)
+                db.session.add(new_s)
 
     # handle images here if needed
     image_links = []

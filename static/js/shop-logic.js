@@ -41,6 +41,7 @@
             
             let amount = $("#amount").val() || 1;
             let color = $("#color").val();
+            let size = $("#size").val() || "";
 
             fetch("/add-to-cart", {
                 method: "POST",
@@ -50,6 +51,7 @@
                     variant_id: variantId,
                     amount: amount,
                     color: color,
+                    size: size,
                 }),
             })
             .then(res => res.json())
@@ -250,6 +252,20 @@
         $("#newColor").val("");
     });
 
+    // Size management
+    $(document).on("click", "#addSize", function() {
+        let val = $("#newSize").val();
+        if (!val) return;
+        let div = document.createElement("span");
+        div.className = "badge bg-secondary m-1 p-2";
+        div.innerHTML = `
+            ${val}
+            <span onclick="this.parentElement.remove()" style="cursor:pointer"> ✕</span>
+        `;
+        document.getElementById("sizeContainer").appendChild(div);
+        $("#newSize").val("");
+    });
+
     // Save product
     $(document).on("click", "#saveItem", function() {
         let name = $("#itemName").val();
@@ -258,6 +274,7 @@
         let discountLabel = $("#itemDiscountLabel").val();
         let desc = $("#itemDesc").val();
         let colors = [...document.getElementById("colorContainer").children].map((el) => el.textContent.replace("✕", "").trim());
+        let sizes = [...document.getElementById("sizeContainer").children].map((el) => el.textContent.replace("✕", "").trim());
 
         let data = {
             name: name,
@@ -266,8 +283,10 @@
             discount_label: discountLabel,
             description: desc,
             category: $("#itemCategory").val() || "",
+            subcategory: $("#itemSubcategory").val() || "",
             images: images,
             colors: colors,
+            sizes: sizes,
         };
 
         fetch("/admin/add-item", {
@@ -281,6 +300,15 @@
             console.error(err);
             alert("An error occurred.");
         });
+    });
+
+    $(document).on("change", "#itemCategory", function() {
+        if ($(this).val() === "bra") {
+            $("#itemSubcategoryWrapper").slideDown();
+        } else {
+            $("#itemSubcategoryWrapper").slideUp();
+            $("#itemSubcategory").val("");
+        }
     });
 
     // Quantity controls

@@ -129,7 +129,11 @@
                         font-family: &quot;Cairo&quot;, &quot;sans-serif&quot;;
                       "
                     >
-                      {{item.name}}
+                      <div>{{item.name}}</div>
+                      <div class="small text-muted mt-1" style="font-size: 13px;">
+                        {% if item.color %}<span>Shade: {{item.color}}</span>{% endif %}
+                        {% if item.size %}<span class="ms-2">| Size: {{item.size}}</span>{% endif %}
+                      </div>
                     </td>
                     <td class="column-3">{{item.price}} E£</td>
                     <td class="column-4">

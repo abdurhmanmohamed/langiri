@@ -423,17 +423,7 @@
                   <span class="val">{{ items_num }}</span>
                 </div>
 
-                {% if total_price and total_price >= 300 %}
-                <div class="discount-badge">
-                  <i class="fa fa-gift"></i>
-                  <span
-                    >Special Offer: 10% discount applied for orders over 300
-                    E£!</span
-                  >
-                </div>
-                {% endif %} {% set discount = 0 %} {% if total_price and
-                total_price >= 300 %} {% set discount = total_price * 0.1 %} {%
-                endif %} {% set subtotal = total_price - discount %}
+                {% set subtotal = total_price %}
                 <div class="summary-item">
                   <span>Subtotal</span>
                   <span

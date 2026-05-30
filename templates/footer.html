@@ -1,0 +1,93 @@
+<footer class="roma-footer p-t-75 p-b-32">
+  <div class="container">
+    <div class="row">
+      <!-- Categories -->
+      <div class="col-sm-6 col-lg-3 p-b-50">
+        <h4 class="stext-301 cl0 p-b-30">Categories</h4>
+        <ul>
+          <li class="p-b-10">
+            <a
+              href="{{url_for('home', category='lip')}}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >Lip Products</a
+            >
+          </li>
+          <li class="p-b-10">
+            <a
+              href="{{url_for('home', category='body')}}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >Body Products</a
+            >
+          </li>
+
+          <li class="p-b-10">
+            <a
+              href="{{url_for('home', category='nail')}}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >Nail Products</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Help -->
+      <div class="col-sm-6 col-lg-3 p-b-50">
+        <h4 class="stext-301 cl0 p-b-30">policy</h4>
+        <ul>
+          <li class="p-b-10">
+            <a
+              href="{{ url_for('return_policy') }}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >Return & Exchange Policy</a
+            >
+          </li>
+          <li class="p-b-10">
+            <a
+              href="{{ url_for('shipping_policy') }}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >shipping policy</a
+            >
+          </li>
+          <li class="p-b-10">
+            <a
+              href="{{ url_for('privacy_policy') }}"
+              class="stext-107 cl7 hov-cl1 trans-04"
+              >privacy policy</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Get in touch -->
+      <div class="col-sm-6 col-lg-3 p-b-50">
+        <h4 class="stext-301 cl0 p-b-30">GET IN TOUCH</h4>
+        <p class="stext-107 cl7 size-201">
+          Any questions? Let us know in our Social Medial Pages below
+        </p>
+        <div class="p-t-27">
+          <a
+            href="https://www.facebook.com/share/1AoVizbAix/"
+            class="fs-18 cl7 hov-cl1 trans-04 m-r-16"
+            ><i class="fa fa-facebook"></i
+          ></a>
+          <a
+            href="https://www.instagram.com/rom.aire?igsh=NDg5OHA0em5wbG5h"
+            class="fs-18 cl7 hov-cl1 trans-04 m-r-16"
+            ><i class="fa fa-instagram"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-t-40">
+      <!-- Copyright -->
+      <p class="stext-107 cl6 txt-center">
+        &copy; {{ current_year }} All rights reserved | Made with
+        <i class="fa fa-heart-o" aria-hidden="true"></i> by
+        <a href="https://www.facebook.com/no.smile.39982" target="_blank"
+          >Dr.Abdurhman</a
+        >
+      </p>
+    </div>
+  </div>
+</footer>
